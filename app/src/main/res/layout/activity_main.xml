@@ -30,10 +30,10 @@
         app:layout_constraintTop_toBottomOf="@+id/urlET" />
 
     <TextView
-        android:id="@+id/threadTypeTV"
+        android:id="@+id/threatTypeTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Thread Type"
+        android:text="Threat Type"
         app:layout_constraintBottom_toTopOf="@+id/checkUrlBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
