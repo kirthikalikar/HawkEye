@@ -18,7 +18,7 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.virtualtrafficlightsurlverifier.R
-import com.example.virtualtrafficlightsurlverifier.model.urlInfo
+import com.example.virtualtrafficlightsurlverifier.model.urlInfoModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import org.json.JSONObject
@@ -36,6 +36,8 @@ class GetUrlFragment : Fragment() {
     private lateinit var urlEt: TextView
     private lateinit var loadingSpinner: ProgressBar
     private lateinit var threatTypeViewStub: ViewStub
+    private lateinit var urlEtText: String
+    private var threatInfo = ""
 
     private val TAG = "GetUrlFragment"
     private val db = Firebase.firestore
@@ -65,7 +67,7 @@ class GetUrlFragment : Fragment() {
     }
 
     fun getURLType() {
-        val urlEtText = urlEt.text.toString().trim()
+        urlEtText = urlEt.text.toString().trim()
         if (urlEtText != "") {
             checkUrlBtn.setVisibility(View.GONE)
             loadingSpinner.setVisibility(View.VISIBLE)
@@ -94,7 +96,7 @@ class GetUrlFragment : Fragment() {
                                 var responseObj = JSONObject(response)
                                 threatType.text = responseObj.toString()
                                 threatTypeFun(responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"))
-                                val urlInfo = urlInfo(urlEtText, responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"), responseObj.getString("adult"), responseObj.getString("malware"), responseObj.getString("parking"), responseObj.getString("phishing"), responseObj.getString("spamming"), responseObj.getString("suspicious"))
+                                val urlInfo = urlInfoModel(urlEtText, responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"), responseObj.getString("adult"), responseObj.getString("malware"), responseObj.getString("parking"), responseObj.getString("phishing"), responseObj.getString("spamming"), responseObj.getString("suspicious"))
                                 db.collection("urlsInfo")
                                     .add(urlInfo)
                                     .addOnSuccessListener { documentReference ->
@@ -205,7 +207,7 @@ class GetUrlFragment : Fragment() {
                 threatTypeViewStub.inflate()
             }
             view?.findViewById<TextView>(R.id.learnMoreTv)?.setOnClickListener{
-                val bundle = bundleOf("threatObj" to threatType.text)
+                val bundle = bundleOf("threatObj" to threatType.text.toString() + " " + urlEt.text.toString().trim())
                 navController.navigate(R.id.action_getUrlFragment_to_urlAnalysisFragment, bundle)
             }
         } else {

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <CheckBox
+        android:id="@+id/unSafeCb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Unsafe"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/adultCb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NFSW Content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/unSafeCb" />
+
+    <CheckBox
+        android:id="@+id/malwareCb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Malware"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/adultCb" />
+
+    <CheckBox
+        android:id="@+id/parkingCb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Parked"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/malwareCb" />
+
+    <CheckBox
+        android:id="@+id/phishingCb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Phishing Url"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/parkingCb" />
+
+    <CheckBox
+        android:id="@+id/spammingCb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Spamm Url"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phishingCb" />
+
+    <CheckBox
+        android:id="@+id/suspiciousCb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NFSW Content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spammingCb" />
+</androidx.constraintlayout.widget.ConstraintLayout>

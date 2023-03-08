@@ -1,19 +1,28 @@
 package com.example.virtualtrafficlightsurlverifier.fragments
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.virtualtrafficlightsurlverifier.R
 import com.example.virtualtrafficlightsurlverifier.adapter.threatInfoAdapter
+import com.example.virtualtrafficlightsurlverifier.model.reportedUrlsModel
 import com.example.virtualtrafficlightsurlverifier.model.threatInfoViewModel
+import com.example.virtualtrafficlightsurlverifier.model.urlInfoModel
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import org.json.JSONObject
+
 
 class UrlAnalysisFragment : Fragment() {
 
@@ -22,6 +31,7 @@ class UrlAnalysisFragment : Fragment() {
     lateinit var riskScoreTv: TextView
     lateinit var threatObj: JSONObject
     private val data =ArrayList<threatInfoViewModel>()
+    private val db = Firebase.firestore
 
     private val TAG = "UrlAnalysisFragment"
 
@@ -35,10 +45,11 @@ class UrlAnalysisFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, arguments?.getString("threatObj").toString().split(" ").toString())
         threatListRv = view.findViewById(R.id.threatListRv)
         url = getString(R.string.url)
         riskScoreTv = view.findViewById(R.id.riskScoreTv)
-        threatObj = JSONObject(arguments?.getString("threatObj"))
+        threatObj = JSONObject(arguments?.getString("threatObj").toString())
         //val categories = listOf("parking", "spamming", "malware", "phishing", "suspicious", "adult") //Registered but not in use
         if (threatObj.getString("risk_score") >= 0.toString()) {
             Log.d(TAG, "Risk Score = " + threatObj.getString("risk_score"))
@@ -79,6 +90,38 @@ class UrlAnalysisFragment : Fragment() {
             adapter = threatInfoAdapter(data)
         }
 
+        view.findViewById<Button>(R.id.reportDataBtn).setOnClickListener{
+            val getGroupNameDialogView = LayoutInflater.from(context).inflate(R.layout.report_url_data,null)
+            val builder = AlertDialog.Builder(context).setView(getGroupNameDialogView).setTitle("Select all that applies to the url: ")
+            builder.setPositiveButton("Report") { dialog, which ->
+                val isUnsafe = getGroupNameDialogView.findViewById<CheckBox>(R.id.unSafeCb).isChecked
+                val hasAdult = getGroupNameDialogView.findViewById<CheckBox>(R.id.adultCb).isChecked
+                val hasMalware = getGroupNameDialogView.findViewById<CheckBox>(R.id.malwareCb).isChecked
+                val isParked = getGroupNameDialogView.findViewById<CheckBox>(R.id.parkingCb).isChecked
+                val isPhishing = getGroupNameDialogView.findViewById<CheckBox>(R.id.phishingCb).isChecked
+                val isSpam = getGroupNameDialogView.findViewById<CheckBox>(R.id.spammingCb).isChecked
+                val isSuspicious = getGroupNameDialogView.findViewById<CheckBox>(R.id.suspiciousCb).isChecked
+                val urlInfo = reportedUrlsModel(threatObj.getString("url"), isUnsafe, hasAdult, hasMalware, isParked, isPhishing, isSpam, isSuspicious)
+
+                db.collection("reportedInfo")
+                    .add(urlInfo)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error adding document", e)
+                    }
+                Toast.makeText(context,
+                    "Reported", Toast.LENGTH_SHORT).show()
+            }
+
+            builder.setNegativeButton("Cancel") { dialog, which ->
+                Toast.makeText(context,
+                    "Cancel", Toast.LENGTH_SHORT).show()
+            }
+            val alertDialog = builder.show()
+
+        }
 
     }
 }
