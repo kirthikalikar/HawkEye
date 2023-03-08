@@ -32,9 +32,6 @@ class GetUrlFragment : Fragment() {
     private lateinit var threatType: TextView
     private lateinit var urlEt: TextView
     private lateinit var loadingSpinner: ProgressBar
-    private lateinit var safeUrlTv: TextView
-    private lateinit var warningUrlTv: TextView
-    private lateinit var dangerUrlTv: TextView
     private lateinit var threatTypeViewStub: ViewStub
 
     private lateinit var learnMoreBtn: Button
@@ -45,7 +42,7 @@ class GetUrlFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(com.example.virtualtrafficlightsurlverifier.R.layout.fragment_get_url, container, false)
+        return inflater.inflate(R.layout.fragment_get_url, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,9 +52,6 @@ class GetUrlFragment : Fragment() {
         urlEt = view.findViewById(R.id.urlET)
         learnMoreBtn = view.findViewById(R.id.navBtn)
         loadingSpinner = view.findViewById(R.id.progressBar)
-        //safeUrlTv = view.findViewById(R.id.safeUrlTv)
-        //warningUrlTv = view.findViewById(R.id.warningUrlTv)
-        //dangerUrlTv = view.findViewById(R.id.dangerUrlTv)
         threatTypeViewStub = view.findViewById(R.id.threatMessageBox)
 
         navController = Navigation.findNavController(view)
