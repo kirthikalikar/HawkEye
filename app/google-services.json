@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "645064221811",
+    "project_id": "url-verifier-aadbc",
+    "storage_bucket": "url-verifier-aadbc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645064221811:android:ca12a6150224c226bc7606",
+        "android_client_info": {
+          "package_name": "com.example.virtualtrafficlightsurlverifier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "645064221811-cr9i6lqpdj95lh3180qm7v4gr269unis.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWcBNXcjM1EZmiaHl-78WPVxwRqAjlaUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "645064221811-cr9i6lqpdj95lh3180qm7v4gr269unis.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

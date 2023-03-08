@@ -18,6 +18,9 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.virtualtrafficlightsurlverifier.R
+import com.example.virtualtrafficlightsurlverifier.model.urlInfo
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -35,6 +38,7 @@ class GetUrlFragment : Fragment() {
     private lateinit var threatTypeViewStub: ViewStub
 
     private val TAG = "GetUrlFragment"
+    private val db = Firebase.firestore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,18 +65,92 @@ class GetUrlFragment : Fragment() {
     }
 
     fun getURLType() {
-        url2check = urlEt.text.toString()
-        if (url2check != "") {
+        val urlEtText = urlEt.text.toString().trim()
+        if (urlEtText != "") {
             checkUrlBtn.setVisibility(View.GONE)
             loadingSpinner.setVisibility(View.VISIBLE)
 
             try {
-                url2check = url + URLEncoder.encode(url2check).replace("+", "%20")
+                url2check = url + URLEncoder.encode(urlEtText).replace("+", "%20")
             } catch (e: UnsupportedEncodingException) {
                 Log.d(TAG, "" + e)
             }
-            val queue = Volley.newRequestQueue(context)
 
+            db.collection("urlsInfo")
+                .whereEqualTo("url",urlEtText)
+                .get()
+                .addOnSuccessListener { result ->
+                    var isFound = 0
+                    for (document in result) {
+                        isFound = 1
+                        threatType.text = document.data.toString()
+                        threatTypeFun(document.data["success"].toString(), document.data["unsafe"].toString(), document.data["risk_score"].toString())
+                    }
+                    if (isFound == 0) {
+                        val queue = Volley.newRequestQueue(context)
+                        val stringRequest = StringRequest(
+                            Request.Method.GET, url2check,
+                            { response ->
+                                var responseObj = JSONObject(response)
+                                threatType.text = responseObj.toString()
+                                threatTypeFun(responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"))
+                                val urlInfo = urlInfo(urlEtText, responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"), responseObj.getString("adult"), responseObj.getString("malware"), responseObj.getString("parking"), responseObj.getString("phishing"), responseObj.getString("spamming"), responseObj.getString("suspicious"))
+                                db.collection("urlsInfo")
+                                    .add(urlInfo)
+                                    .addOnSuccessListener { documentReference ->
+                                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w(TAG, "Error adding document", e)
+                                    }
+                            },
+                            { error ->
+                                Toast.makeText(context, "Not considering url ${error.localizedMessage}", Toast.LENGTH_SHORT).show()
+                            })
+
+// Add the request to the RequestQueue.
+                        queue.add(stringRequest)
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents.", exception)
+                }
+
+            //Toast.makeText(context, "Before Volley", Toast.LENGTH_SHORT).show()
+            if (threatType.text == "") {
+                val queue = Volley.newRequestQueue(context)
+                val stringRequest = StringRequest(
+                    Request.Method.GET, url2check,
+                    { response ->
+                        var responseObj = JSONObject(response)
+                        threatType.text = responseObj.toString()
+                        threatTypeFun(responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"))
+
+                    },
+                    { error ->
+                        Toast.makeText(context, "Not considering url ${error.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    })
+
+// Add the request to the RequestQueue.
+                queue.add(stringRequest)
+            }
+
+//            db.collection("urlsInfo")
+//                .whereEqualTo("url",url2check)
+//                .get()
+//                .addOnSuccessListener { result ->
+//                    for (document in result) {
+//                        Log.d(TAG, "${document.id} => ${document.data}")
+//                        Toast.makeText(context, ""+"${document.id} => ${document.data}", Toast.LENGTH_SHORT).show()
+//                    }
+//                    Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
+//                }
+//                .addOnFailureListener { exception ->
+//                    Log.w(TAG, "Error getting documents.", exception)
+//                }
+
+            /*
+            val queue = Volley.newRequestQueue(context)
             val stringRequest = StringRequest(
                 Request.Method.GET, url2check,
                 { response ->
@@ -81,7 +159,7 @@ class GetUrlFragment : Fragment() {
 
                     loadingSpinner.setVisibility(View.GONE)
                     if (responseObj.getString("success") === "true") {
-                        if (responseObj.getString("risk_score").toInt() >= 85) {
+                        if (responseObj.getString("unsafe") == "true") {
                             threatTypeViewStub.setLayoutResource(R.layout.danger_url_view)
                             threatTypeViewStub.inflate()
                         } else if (responseObj.getString("risk_score").toInt() >= 75) {
@@ -105,11 +183,35 @@ class GetUrlFragment : Fragment() {
                 })
 
 // Add the request to the RequestQueue.
-            queue.add(stringRequest)
+            queue.add(stringRequest)*/
         } else {
             Toast.makeText(context, "Enter a valid url", Toast.LENGTH_SHORT).show()
         }
 
+    }
+
+    fun threatTypeFun(isSuccess: String, isUnsafe: String, riskScore: String) {
+        loadingSpinner.setVisibility(View.GONE)
+        if (isSuccess == "true") {
+            //Toast.makeText(context, "Inside isSuccess is true", Toast.LENGTH_SHORT).show()
+            if (isUnsafe == "true") {
+                threatTypeViewStub.setLayoutResource(R.layout.danger_url_view)
+                threatTypeViewStub.inflate()
+            } else if (riskScore.toInt() >= 75) {
+                threatTypeViewStub.setLayoutResource(R.layout.warning_url_view)
+                threatTypeViewStub.inflate()
+            } else {
+                threatTypeViewStub.setLayoutResource(R.layout.safe_url_view)
+                threatTypeViewStub.inflate()
+            }
+            view?.findViewById<TextView>(R.id.learnMoreTv)?.setOnClickListener{
+                val bundle = bundleOf("threatObj" to threatType.text)
+                navController.navigate(R.id.action_getUrlFragment_to_urlAnalysisFragment, bundle)
+            }
+        } else {
+            checkUrlBtn.setVisibility(View.VISIBLE)
+            Toast.makeText(context, "Please enter a valid url", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
