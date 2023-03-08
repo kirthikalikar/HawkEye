@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">VirtualTrafficLightsURLVerifier</string>
+    <string name="url">https://www.ipqualityscore.com/api/json/url/</string>
 </resources>

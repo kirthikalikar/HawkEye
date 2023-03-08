@@ -2,40 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/hawkeyebg"
     tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/urlET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="20"
-        android:textSize="20sp"
-        android:inputType="textPersonName"
-        android:hint="URL"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:defaultNavHost="true"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/checkUrlBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Check URL"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/urlET" />
-
-    <TextView
-        android:id="@+id/threatTypeTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Threat Type"
-        app:layout_constraintBottom_toTopOf="@+id/checkUrlBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/urlET" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/url_analysis" />
 </androidx.constraintlayout.widget.ConstraintLayout>

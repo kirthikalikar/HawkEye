@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/url_analysis"
+    app:startDestination="@id/getUrlFragment">
+
+    <fragment
+        android:id="@+id/getUrlFragment"
+        android:name="com.example.virtualtrafficlightsurlverifier.fragments.GetUrlFragment"
+        android:label="fragment_get_url"
+        tools:layout="@layout/fragment_get_url" >
+        <action
+            android:id="@+id/action_getUrlFragment_to_urlAnalysisFragment"
+            app:destination="@id/urlAnalysisFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/urlAnalysisFragment"
+        android:name="com.example.virtualtrafficlightsurlverifier.fragments.UrlAnalysisFragment"
+        android:label="fragment_url_analysis"
+        tools:layout="@layout/fragment_url_analysis" />
+</navigation>

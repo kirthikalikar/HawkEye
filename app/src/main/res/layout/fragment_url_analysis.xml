@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".fragments.UrlAnalysisFragment"
+    android:background="@drawable/hawkeyebg">
+
+    <TextView
+        android:id="@+id/riskScoreTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Risk Score: "
+        app:layout_constraintBottom_toTopOf="@+id/threatListRv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/threatListRv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/hawkeyebg"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/threat_type_card_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
