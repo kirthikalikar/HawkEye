@@ -34,7 +34,6 @@ class GetUrlFragment : Fragment() {
     private lateinit var loadingSpinner: ProgressBar
     private lateinit var threatTypeViewStub: ViewStub
 
-    private lateinit var learnMoreBtn: Button
     private val TAG = "GetUrlFragment"
 
     override fun onCreateView(
@@ -50,7 +49,6 @@ class GetUrlFragment : Fragment() {
         checkUrlBtn = view.findViewById(R.id.checkUrlBtn)
         threatType = view.findViewById(R.id.threatTypeTV)
         urlEt = view.findViewById(R.id.urlET)
-        learnMoreBtn = view.findViewById(R.id.navBtn)
         loadingSpinner = view.findViewById(R.id.progressBar)
         threatTypeViewStub = view.findViewById(R.id.threatMessageBox)
 
@@ -58,13 +56,8 @@ class GetUrlFragment : Fragment() {
         url = getString(R.string.url)
         threatType.setVisibility(View.GONE)
         loadingSpinner.setVisibility(View.GONE)
-        //threatTypeViewStub.setVisibility(View.GONE)
 
         checkUrlBtn.setOnClickListener{getURLType()}
-        learnMoreBtn.setOnClickListener{
-            val bundle = bundleOf("threatObj" to threatType.text)
-            navController.navigate(R.id.action_getUrlFragment_to_urlAnalysisFragment, bundle)
-        }
     }
 
     fun getURLType() {
@@ -97,6 +90,10 @@ class GetUrlFragment : Fragment() {
                         } else {
                             threatTypeViewStub.setLayoutResource(R.layout.safe_url_view)
                             threatTypeViewStub.inflate()
+                        }
+                        view?.findViewById<TextView>(R.id.learnMoreTv)?.setOnClickListener{
+                            val bundle = bundleOf("threatObj" to threatType.text)
+                            navController.navigate(R.id.action_getUrlFragment_to_urlAnalysisFragment, bundle)
                         }
                     } else {
                         checkUrlBtn.setVisibility(View.VISIBLE)
