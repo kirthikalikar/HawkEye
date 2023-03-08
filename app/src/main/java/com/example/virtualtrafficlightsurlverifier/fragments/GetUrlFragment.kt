@@ -2,15 +2,16 @@ package com.example.virtualtrafficlightsurlverifier.fragments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewStub
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.android.volley.Request
@@ -21,6 +22,7 @@ import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 
+
 class GetUrlFragment : Fragment() {
 
     lateinit var navController: NavController
@@ -29,8 +31,11 @@ class GetUrlFragment : Fragment() {
     private lateinit var url2check: String
     private lateinit var threatType: TextView
     private lateinit var urlEt: TextView
-    private lateinit var threatResultTv: TextView
     private lateinit var loadingSpinner: ProgressBar
+    private lateinit var safeUrlTv: TextView
+    private lateinit var warningUrlTv: TextView
+    private lateinit var dangerUrlTv: TextView
+    private lateinit var threatTypeViewStub: ViewStub
 
     private lateinit var learnMoreBtn: Button
     private val TAG = "GetUrlFragment"
@@ -40,7 +45,7 @@ class GetUrlFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_get_url, container, false)
+        return inflater.inflate(com.example.virtualtrafficlightsurlverifier.R.layout.fragment_get_url, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,14 +54,17 @@ class GetUrlFragment : Fragment() {
         threatType = view.findViewById(R.id.threatTypeTV)
         urlEt = view.findViewById(R.id.urlET)
         learnMoreBtn = view.findViewById(R.id.navBtn)
-        threatResultTv = view.findViewById(R.id.threatResultTv)
         loadingSpinner = view.findViewById(R.id.progressBar)
+        //safeUrlTv = view.findViewById(R.id.safeUrlTv)
+        //warningUrlTv = view.findViewById(R.id.warningUrlTv)
+        //dangerUrlTv = view.findViewById(R.id.dangerUrlTv)
+        threatTypeViewStub = view.findViewById(R.id.threatMessageBox)
 
         navController = Navigation.findNavController(view)
         url = getString(R.string.url)
         threatType.setVisibility(View.GONE)
-        threatResultTv.setVisibility(View.GONE)
         loadingSpinner.setVisibility(View.GONE)
+        //threatTypeViewStub.setVisibility(View.GONE)
 
         checkUrlBtn.setOnClickListener{getURLType()}
         learnMoreBtn.setOnClickListener{
@@ -86,20 +94,20 @@ class GetUrlFragment : Fragment() {
 
                     loadingSpinner.setVisibility(View.GONE)
                     if (responseObj.getString("success") === "true") {
-                        threatResultTv.setVisibility(View.VISIBLE)
+                        if (responseObj.getString("risk_score").toInt() >= 85) {
+                            threatTypeViewStub.setLayoutResource(R.layout.danger_url_view)
+                            threatTypeViewStub.inflate()
+                        } else if (responseObj.getString("risk_score").toInt() >= 75) {
+                            threatTypeViewStub.setLayoutResource(R.layout.warning_url_view)
+                            threatTypeViewStub.inflate()
+                        } else {
+                            threatTypeViewStub.setLayoutResource(R.layout.safe_url_view)
+                            threatTypeViewStub.inflate()
+                        }
                     } else {
                         checkUrlBtn.setVisibility(View.VISIBLE)
                         Toast.makeText(context, "Please enter a valid url", Toast.LENGTH_SHORT).show()
                     }
-                    /*Toast.makeText(this, responseObj.toString(), Toast.LENGTH_SHORT).show()
-                    try {
-                        //Toast.makeText(this, "Inside malware", Toast.LENGTH_SHORT).show()
-                        val threatObj = JSONObject(responseObj.getString("threat"))
-                        val threatTypeList = threatObj.getString("threatTypes")
-                        threatType.text = "Malware"
-                    } catch (e: Exception) {
-                        threatType.text = "Safe url"
-                    }*/
                 },
                 { error ->
                     Toast.makeText(context, "Not considering url ${error.localizedMessage}", Toast.LENGTH_SHORT).show()

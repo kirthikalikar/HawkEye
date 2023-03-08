@@ -33,18 +33,6 @@
         app:layout_constraintTop_toBottomOf="@+id/urlETBox" />
 
     <TextView
-        android:id="@+id/threatResultTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Threat Result"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/urlETBox" />
-
-    <TextView
         android:id="@+id/threatTypeTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,5 +61,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/urlETBox"/>
+
+    <ViewStub
+        android:id="@+id/threatMessageBox"
+        android:inflatedId="@+id/safeUrlTv"
+        android:layout="@layout/safe_url_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/urlETBox" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
