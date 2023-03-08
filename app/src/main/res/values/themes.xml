@@ -10,7 +10,7 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">#1D0650</item>
         <!-- Customize your theme here. -->
     </style>
 
@@ -18,5 +18,10 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
         <item name="color">@color/grey</item>
+    </style>
+
+    <style name="round_image_view">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50dp</item>
     </style>
 </resources>

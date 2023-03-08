@@ -1,11 +1,10 @@
 package com.example.virtualtrafficlightsurlverifier.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.virtualtrafficlightsurlverifier.R
 import com.example.virtualtrafficlightsurlverifier.model.threatInfoViewModel
@@ -27,14 +26,21 @@ class threatInfoAdapter(private val threatList: ArrayList<threatInfoViewModel>) 
         val threatViewModel:threatInfoViewModel = threatList[position]
 
         // sets the text to the textview from our itemHolder class
-        holder.threatItem.text = threatViewModel.text
+        holder.threatImgPath.setImageResource(threatViewModel.imgPath)
+        holder.threatTitle.text = threatViewModel.title
+        holder.threatDefinition.text = threatViewModel.definition
+
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val threatItem: TextView
+        val threatImgPath: ImageView
+        val threatTitle: TextView
+        val threatDefinition: TextView
 
         init {
-            threatItem = view.findViewById(R.id.threatListItemTv)
+            threatImgPath = view.findViewById(R.id.threatIv)
+            threatTitle = view.findViewById(R.id.threatListItemTv)
+            threatDefinition = view.findViewById(R.id.definitionTv)
         }
     }
 }

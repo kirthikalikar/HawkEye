@@ -10,8 +10,12 @@
     <TextView
         android:id="@+id/riskScoreTv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+        android:textSize="30dp"
         android:text="Risk Score: "
+        android:textColor="@color/white"
+        android:padding="10dp"
+        android:background = "@drawable/searchbg"
         app:layout_constraintBottom_toTopOf="@+id/threatListRv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,12 +26,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="100dp"
+        android:background="@drawable/hawkeyebg"
+        app:layoutManager="LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/hawkeyebg"
-        app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/threat_type_card_view" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:padding="10dp"
+        android:text=""
+        android:background="@drawable/hawkeyebg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/riskScoreTv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
