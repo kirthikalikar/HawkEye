@@ -86,7 +86,13 @@ class GetUrlFragment : Fragment() {
                     for (document in result) {
                         isFound = 1
                         threatType.text = document.data.toString()
-                        threatTypeFun(document.data["success"].toString(), document.data["unsafe"].toString(), document.data["risk_score"].toString())
+                        loadingSpinner.setVisibility(View.GONE)
+                        if (document.data["success"].toString() == "true") {
+                            threatTypeFun(document.data["unsafe"].toString(), document.data["risk_score"].toString())
+                        } else {
+                            checkUrlBtn.setVisibility(View.VISIBLE)
+                            Toast.makeText(context, "Please enter a valid url", Toast.LENGTH_SHORT).show()
+                        }
                     }
                     if (isFound == 0) {
                         val queue = Volley.newRequestQueue(context)
@@ -95,124 +101,55 @@ class GetUrlFragment : Fragment() {
                             { response ->
                                 var responseObj = JSONObject(response)
                                 threatType.text = responseObj.toString()
-                                threatTypeFun(responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"))
-                                val urlInfo = urlInfoModel(urlEtText, responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"), responseObj.getString("adult"), responseObj.getString("malware"), responseObj.getString("parking"), responseObj.getString("phishing"), responseObj.getString("spamming"), responseObj.getString("suspicious"))
-                                db.collection("urlsInfo")
-                                    .add(urlInfo)
-                                    .addOnSuccessListener { documentReference ->
-                                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.w(TAG, "Error adding document", e)
-                                    }
+                                loadingSpinner.setVisibility(View.GONE)
+                                if (responseObj.getString("success") == "true") {
+                                    threatTypeFun(responseObj.getString("unsafe"), responseObj.getString("risk_score"))
+                                    val urlInfo = urlInfoModel(urlEtText, responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"), responseObj.getString("adult"), responseObj.getString("malware"), responseObj.getString("parking"), responseObj.getString("phishing"), responseObj.getString("spamming"), responseObj.getString("suspicious"))
+                                    db.collection("urlsInfo")
+                                        .add(urlInfo)
+                                        .addOnSuccessListener { documentReference ->
+                                            Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.w(TAG, "Error adding document", e)
+                                        }
+                                } else {
+                                    checkUrlBtn.setVisibility(View.VISIBLE)
+                                    Toast.makeText(context, "Please enter a valid url", Toast.LENGTH_SHORT).show()
+                                }
                             },
                             { error ->
-                                Toast.makeText(context, "Not considering url ${error.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Error scanning url", Toast.LENGTH_SHORT).show()
+                                loadingSpinner.setVisibility(View.GONE)
+                                checkUrlBtn.setVisibility(View.VISIBLE)
                             })
 
-// Add the request to the RequestQueue.
                         queue.add(stringRequest)
                     }
                 }
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents.", exception)
                 }
-
-            //Toast.makeText(context, "Before Volley", Toast.LENGTH_SHORT).show()
-            if (threatType.text == "") {
-                val queue = Volley.newRequestQueue(context)
-                val stringRequest = StringRequest(
-                    Request.Method.GET, url2check,
-                    { response ->
-                        var responseObj = JSONObject(response)
-                        threatType.text = responseObj.toString()
-                        threatTypeFun(responseObj.getString("success"), responseObj.getString("unsafe"), responseObj.getString("risk_score"))
-
-                    },
-                    { error ->
-                        Toast.makeText(context, "Not considering url ${error.localizedMessage}", Toast.LENGTH_SHORT).show()
-                    })
-
-// Add the request to the RequestQueue.
-                queue.add(stringRequest)
-            }
-
-//            db.collection("urlsInfo")
-//                .whereEqualTo("url",url2check)
-//                .get()
-//                .addOnSuccessListener { result ->
-//                    for (document in result) {
-//                        Log.d(TAG, "${document.id} => ${document.data}")
-//                        Toast.makeText(context, ""+"${document.id} => ${document.data}", Toast.LENGTH_SHORT).show()
-//                    }
-//                    Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
-//                }
-//                .addOnFailureListener { exception ->
-//                    Log.w(TAG, "Error getting documents.", exception)
-//                }
-
-            /*
-            val queue = Volley.newRequestQueue(context)
-            val stringRequest = StringRequest(
-                Request.Method.GET, url2check,
-                { response ->
-                    var responseObj = JSONObject(response)
-                    threatType.text = responseObj.toString()
-
-                    loadingSpinner.setVisibility(View.GONE)
-                    if (responseObj.getString("success") === "true") {
-                        if (responseObj.getString("unsafe") == "true") {
-                            threatTypeViewStub.setLayoutResource(R.layout.danger_url_view)
-                            threatTypeViewStub.inflate()
-                        } else if (responseObj.getString("risk_score").toInt() >= 75) {
-                            threatTypeViewStub.setLayoutResource(R.layout.warning_url_view)
-                            threatTypeViewStub.inflate()
-                        } else {
-                            threatTypeViewStub.setLayoutResource(R.layout.safe_url_view)
-                            threatTypeViewStub.inflate()
-                        }
-                        view?.findViewById<TextView>(R.id.learnMoreTv)?.setOnClickListener{
-                            val bundle = bundleOf("threatObj" to threatType.text)
-                            navController.navigate(R.id.action_getUrlFragment_to_urlAnalysisFragment, bundle)
-                        }
-                    } else {
-                        checkUrlBtn.setVisibility(View.VISIBLE)
-                        Toast.makeText(context, "Please enter a valid url", Toast.LENGTH_SHORT).show()
-                    }
-                },
-                { error ->
-                    Toast.makeText(context, "Not considering url ${error.localizedMessage}", Toast.LENGTH_SHORT).show()
-                })
-
-// Add the request to the RequestQueue.
-            queue.add(stringRequest)*/
         } else {
             Toast.makeText(context, "Enter a valid url", Toast.LENGTH_SHORT).show()
         }
 
     }
 
-    fun threatTypeFun(isSuccess: String, isUnsafe: String, riskScore: String) {
-        loadingSpinner.setVisibility(View.GONE)
-        if (isSuccess == "true") {
-            //Toast.makeText(context, "Inside isSuccess is true", Toast.LENGTH_SHORT).show()
-            if (isUnsafe == "true") {
-                threatTypeViewStub.setLayoutResource(R.layout.danger_url_view)
-                threatTypeViewStub.inflate()
-            } else if (riskScore.toInt() >= 75) {
-                threatTypeViewStub.setLayoutResource(R.layout.warning_url_view)
-                threatTypeViewStub.inflate()
-            } else {
-                threatTypeViewStub.setLayoutResource(R.layout.safe_url_view)
-                threatTypeViewStub.inflate()
-            }
-            view?.findViewById<TextView>(R.id.learnMoreTv)?.setOnClickListener{
-                val bundle = bundleOf("threatObj" to threatType.text.toString() + " " + urlEt.text.toString().trim())
-                navController.navigate(R.id.action_getUrlFragment_to_urlAnalysisFragment, bundle)
-            }
+    fun threatTypeFun(isUnsafe: String, riskScore: String) {
+        if (riskScore.toInt() >= 85) {
+            threatTypeViewStub.setLayoutResource(R.layout.danger_url_view)
+            threatTypeViewStub.inflate()
+        } else if (riskScore.toInt() >= 75) {
+            threatTypeViewStub.setLayoutResource(R.layout.warning_url_view)
+            threatTypeViewStub.inflate()
         } else {
-            checkUrlBtn.setVisibility(View.VISIBLE)
-            Toast.makeText(context, "Please enter a valid url", Toast.LENGTH_SHORT).show()
+            threatTypeViewStub.setLayoutResource(R.layout.safe_url_view)
+            threatTypeViewStub.inflate()
+        }
+        view?.findViewById<TextView>(R.id.learnMoreTv)?.setOnClickListener{
+            val bundle = bundleOf("threatObj" to threatType.text.toString() + " " + urlEt.text.toString().trim())
+            navController.navigate(R.id.action_getUrlFragment_to_urlAnalysisFragment, bundle)
         }
     }
 
